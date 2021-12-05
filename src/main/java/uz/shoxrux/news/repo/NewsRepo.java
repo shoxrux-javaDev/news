@@ -18,12 +18,16 @@ import java.util.Optional;
 @Repository
 public interface NewsRepo extends JpaRepository<News, Long> {
 
-    @Query(value = "select * from news n inner join news_user nu on n.id = nu.news_id where nu.user_id = :id ",nativeQuery = true)
+    @Query(value = "select * from news n inner join news_user nu on n.id = nu.news_id where nu.user_id = :id ", nativeQuery = true)
     List<News> getUserId_(@Param("id") Long id);
 
-    @Query(value = "select n.UPDATED_AT as uzTime,n.TITLE_UZ as uzTitle,n.TEXT_UZ as uzText,concat(SUBSTR(n.TEXT_UZ,1,100),'...') as uzShortText from " +
+//    @Query(value = "select cast(id as varchar),receive_phone_number,created_at,status,receive_amount_with_tax_ding,received_currency_iso,operator_name " +
+//            "from payment\n where sender_id = :userId;", nativeQuery = true)
+//    Page<IReportMobile> getAllReportWithUserIdForMobile(@Param("pageable") Pageable pageable, @Param("userId") String userId);
+
+    @Query(value = "select n.UPDATED_AT as uzTime,n.title_uz as uzTitle,n.TEXT_UZ as uzText,concat(SUBSTR(n.TEXT_UZ,1,100),'...') as uzShortText from " +
             " NEWS n join NEWS_USER nu on n.ID = nu.NEWS_ID where  nu.USER_ID is null or nu.USER_ID = :userId and n.STATUS ='NEW' order by n.CREATED_AT ", nativeQuery = true)
-    Page<UzbNews> getUzNews(@Param("userId") Long userId, Pageable pageable);
+    Page<UzbNews> getUzNews(@Param("pageable") Pageable pageable, @Param("userId") Long userId);
 
     @Query(value = "select n.UPDATED_AT as ruTime,n.TITLE_RU as ruTitle,n.TEXT_RU as ruText,concat(SUBSTR(n.TEXT_UZ,1,100),'...') as ruShortText from " +
             " NEWS n join NEWS_USER nu on n.ID = nu.NEWS_ID where nu.USER_ID is null or nu.USER_ID = ? and n.STATUS ='APPROVED' order by n.CREATED_AT ", nativeQuery = true)

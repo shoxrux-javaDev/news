@@ -80,8 +80,8 @@ public class NewsServiceImp implements NewsService {
         if (byId.isEmpty()) return new ApiResponse(EnumMessage.NOT_FOUND.toString());
         switch (lang) {
             case "uz" -> {
-                Page<UzbNews> uzNews = newsRepo.getUzNews(userId, pageable);
-                return new ApiResponse(uzNews.toList());
+                Page<UzbNews> uzNews = newsRepo.getUzNews(pageable,userId);
+                return new ApiResponse(uzNews.getContent());
             }
             case "eng" -> {
                 List<EngNews> engNews = newsRepo.getEngNews(UUID.randomUUID().getLeastSignificantBits(), pageable);
