@@ -21,6 +21,7 @@ import uz.shoxrux.news.repo.projection.EngNews;
 import uz.shoxrux.news.repo.projection.RusNews;
 import uz.shoxrux.news.repo.projection.UzbNews;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
@@ -36,24 +37,23 @@ public class NewsServiceImp implements NewsService {
     NewsRepo newsRepo;
 
     @Override
-    public ApiResponse addNews(String newsDto, MultipartFile file) throws JsonProcessingException {
+    public ApiResponse addNews(String newsDto, MultipartFile file) throws IOException {
 //        Optional<News> optionalNews = newsRepo.findById(Long.valueOf(UUID.randomUUID().toString()));
-//        if (optionalNews.isEmpty() || file.isEmpty() )
+//        if (optionalNews.isEmpty() && file.isEmpty() )
 //            return new ApiResponse(EnumMessage.NOT_FOUND.toString());
         News newsModel = new News();
         ObjectMapper objectMapper = new ObjectMapper();
         NewsDto newsDto1 = objectMapper.readValue(newsDto, NewsDto.class);
         addNewsForAnyField(newsDto1, newsModel);
-            try {
-                List<Long> collect = Arrays.stream(new String(file.getBytes(), StandardCharsets.UTF_8).split(","))
-                        .map(String::trim)
-                        .filter(str -> str.length() >= 6)
-                        .map(Long::valueOf)
-                        .collect(Collectors.toList());
-                newsModel.setUserId(collect);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        if (file != null) {
+            List<Long> userList = Arrays.stream(new String(file.getBytes(), StandardCharsets.UTF_8).split(","))
+                    .map(String::trim)
+                    .filter(str -> str.length() >= 2)
+                    .map(Long::valueOf)
+                    .collect(Collectors.toList());
+            newsModel.setUserId(userList);
+        }
+        newsModel.setStatus(EnumStatus.NEW);
         newsRepo.save(newsModel);
         return new ApiResponse(EnumMessage.SAVE_ALL.toString());
     }
@@ -75,12 +75,12 @@ public class NewsServiceImp implements NewsService {
 
     @Override
     public ApiResponse getAllNews(String lang, Integer page, Integer size, Long userId) {
-        Pageable pageable = PageRequest.of(page,size);
-        Optional<News> byId = newsRepo.findById(UUID.randomUUID().getLeastSignificantBits());
+        Pageable pageable = PageRequest.of(page, size);
+        List<News> byId = newsRepo.getUserId_(userId);
         if (byId.isEmpty()) return new ApiResponse(EnumMessage.NOT_FOUND.toString());
         switch (lang) {
             case "uz" -> {
-                Page<UzbNews> uzNews = newsRepo.getUzNews(UUID.randomUUID().getLeastSignificantBits(), pageable);
+                Page<UzbNews> uzNews = newsRepo.getUzNews(userId, pageable);
                 return new ApiResponse(uzNews.toList());
             }
             case "eng" -> {
@@ -96,7 +96,7 @@ public class NewsServiceImp implements NewsService {
 
     @Override
     public ApiResponse getNewsForADM(Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page,size);
+        Pageable pageable = PageRequest.of(page, size);
         List<News> newsForAdm = newsRepo.getNewsForAdm(pageable);
         if (newsForAdm.isEmpty()) return new ApiResponse(EnumMessage.NOT_NULL_LIST.toString());
         return new ApiResponse(newsForAdm);
@@ -135,13 +135,13 @@ public class NewsServiceImp implements NewsService {
 
     public void addNewsForAnyField(NewsDto newsDto, News news) {
         int count = 0;
-        if (!(newsDto.getTitleRu().isEmpty() || newsDto.getTextRu().isEmpty())) count++;
+        if (newsDto.getTitleRu().isEmpty() || newsDto.getTextRu().isEmpty()) count++;
         news.setTitleRu(newsDto.getTitleRu());
         news.setTextRu(newsDto.getTextRu());
-        if (!(newsDto.getTitleUz().isEmpty() || newsDto.getTextUz().isEmpty())) count++;
+        if (newsDto.getTitleUz().isEmpty() || newsDto.getTextUz().isEmpty()) count++;
         news.setTitleUz(newsDto.getTitleUz());
         news.setTextUz(newsDto.getTextUz());
-        if (!(newsDto.getTitleEng().isEmpty() || newsDto.getTextEng().isEmpty())) count++;
+        if (newsDto.getTitleEng().isEmpty() || newsDto.getTextEng().isEmpty()) count++;
         news.setTitleEng(newsDto.getTitleEng());
         news.setTextEng(newsDto.getTextEng());
         if (count == 3)

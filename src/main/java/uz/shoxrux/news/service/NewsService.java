@@ -7,9 +7,11 @@ import uz.shoxrux.news.dto.ApiResponse;
 import uz.shoxrux.news.dto.ApproveAndDeleteDto;
 import uz.shoxrux.news.dto.NewsDto;
 
+import java.io.IOException;
+
 public interface NewsService {
 
-    ApiResponse addNews(String newsDto, MultipartFile file) throws JsonProcessingException;
+    ApiResponse addNews(String newsDto, MultipartFile file) throws IOException;
 
     ApiResponse addApprovedNews(ApproveAndDeleteDto appDto);
 

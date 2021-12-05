@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import uz.shoxrux.news.entity.News;
 import uz.shoxrux.news.repo.projection.EngNews;
@@ -12,13 +13,17 @@ import uz.shoxrux.news.repo.projection.RusNews;
 import uz.shoxrux.news.repo.projection.UzbNews;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface NewsRepo extends JpaRepository<News, Long> {
 
+    @Query(value = "select * from news n inner join news_user nu on n.id = nu.news_id where nu.user_id = :id ",nativeQuery = true)
+    List<News> getUserId_(@Param("id") Long id);
+
     @Query(value = "select n.UPDATED_AT as uzTime,n.TITLE_UZ as uzTitle,n.TEXT_UZ as uzText,concat(SUBSTR(n.TEXT_UZ,1,100),'...') as uzShortText from " +
-            " NEWS n join NEWS_USER nu on n.ID = nu.NEWS_ID where  nu.USER_ID is null or nu.USER_ID = ? and n.STATUS ='APPROVED' order by n.CREATED_AT ", nativeQuery = true)
-    Page<UzbNews> getUzNews(Long userId, Pageable pageable);
+            " NEWS n join NEWS_USER nu on n.ID = nu.NEWS_ID where  nu.USER_ID is null or nu.USER_ID = :userId and n.STATUS ='NEW' order by n.CREATED_AT ", nativeQuery = true)
+    Page<UzbNews> getUzNews(@Param("userId") Long userId, Pageable pageable);
 
     @Query(value = "select n.UPDATED_AT as ruTime,n.TITLE_RU as ruTitle,n.TEXT_RU as ruText,concat(SUBSTR(n.TEXT_UZ,1,100),'...') as ruShortText from " +
             " NEWS n join NEWS_USER nu on n.ID = nu.NEWS_ID where nu.USER_ID is null or nu.USER_ID = ? and n.STATUS ='APPROVED' order by n.CREATED_AT ", nativeQuery = true)

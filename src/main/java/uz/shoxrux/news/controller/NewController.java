@@ -11,6 +11,8 @@ import uz.shoxrux.news.dto.ApproveAndDeleteDto;
 import uz.shoxrux.news.dto.NewsDto;
 import uz.shoxrux.news.service.NewsService;
 
+import java.io.IOException;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/v1")
@@ -20,14 +22,13 @@ public class NewController {
 
 //    @PreAuthorize(value = "hasRole('ADMIN')")
     @PostMapping(value = "/new")
-    public ResponseEntity<?> add(@RequestParam(required = false,value = "file") MultipartFile file, @RequestParam String dtoNews) throws JsonProcessingException {
+    public ResponseEntity<?> add(@RequestParam(required = false,value = "file") MultipartFile file, @RequestParam String dtoNews) throws IOException {
         ApiResponse response = newsService.addNews(dtoNews, file);
         return ResponseEntity.status(response.isSuccess() ? 200 : 409).body(response);
     }
 
-
 //    @PreAuthorize(value = "hasRole('ADMIN')")
-    @PostMapping("/like_app")
+    @PostMapping("/approved")
     public ResponseEntity<?> addApprove(@RequestBody ApproveAndDeleteDto appDto) {
         ApiResponse response = newsService.addApprovedNews(appDto);
         return ResponseEntity.status(response.isSuccess() ? 200 : 409).body(response);
