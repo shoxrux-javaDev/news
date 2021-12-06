@@ -11,15 +11,13 @@ import java.io.IOException;
 
 public interface NewsService {
 
-    ApiResponse addNews(String newsDto, MultipartFile file) throws IOException;
+    ApiResponse addNews(NewsDto newsDto, MultipartFile file) throws IOException;
 
-    ApiResponse addApprovedNews(ApproveAndDeleteDto appDto);
+    ApiResponse updateStatus(ApproveAndDeleteDto appDto);
 
-    ApiResponse getAllNews(String lang, Integer page, Integer size, Long userId);
+    ApiResponse getToUser(String lang, Integer page, Integer size, Long userId);
 
     ApiResponse editNews(String lang, Long id, NewsDto newsDto);
 
-    ApiResponse deleteNews(ApproveAndDeleteDto appDto);
-
-    ApiResponse getNewsForADM(Integer page, Integer size);
+    ApiResponse getToAdmin(Integer page, Integer size);
 }

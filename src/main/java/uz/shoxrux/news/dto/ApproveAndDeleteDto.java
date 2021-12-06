@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import uz.shoxrux.news.enums.NewsStatus;
 
 @Data
 @NoArgsConstructor
@@ -14,5 +15,5 @@ public class ApproveAndDeleteDto {
     private Long[] ids;
 
     @JsonProperty("status")
-    private String status;
+    private NewsStatus status;
 }

@@ -8,12 +8,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import uz.shoxrux.news.entity.News;
-import uz.shoxrux.news.repo.projection.EngNews;
-import uz.shoxrux.news.repo.projection.RusNews;
-import uz.shoxrux.news.repo.projection.UzbNews;
+import uz.shoxrux.news.repo.projection.NewsProjection;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface NewsRepo extends JpaRepository<News, Long> {
@@ -25,19 +22,19 @@ public interface NewsRepo extends JpaRepository<News, Long> {
 //            "from payment\n where sender_id = :userId;", nativeQuery = true)
 //    Page<IReportMobile> getAllReportWithUserIdForMobile(@Param("pageable") Pageable pageable, @Param("userId") String userId);
 
-    @Query(value = "select n.UPDATED_AT as uzTime,n.title_uz as uzTitle,n.TEXT_UZ as uzText,concat(SUBSTR(n.TEXT_UZ,1,100),'...') as uzShortText from " +
-            " NEWS n join NEWS_USER nu on n.ID = nu.NEWS_ID where  nu.USER_ID is null or nu.USER_ID = :userId and n.STATUS ='NEW' order by n.CREATED_AT ", nativeQuery = true)
-    Page<UzbNews> getUzNews(@Param("pageable") Pageable pageable, @Param("userId") Long userId);
+    @Query(value = "select n.updated_at as newsTime,n.title_uz as uzTitle,n.text_uz as uzText,concat(SUBSTR(n.text_uz,1,100),'...') as newsShortText from " +
+            " news n join news_user nu on n.ID = nu.news_id where  nu.user_id = -1 or nu.user_id = (:userId) and n.status ='NEW' order by n.created_at ", nativeQuery = true)
+    Page<NewsProjection> getUzNews(@Param("userId") Long userId, @Param("pageable") Pageable pageable);
 
-    @Query(value = "select n.UPDATED_AT as ruTime,n.TITLE_RU as ruTitle,n.TEXT_RU as ruText,concat(SUBSTR(n.TEXT_UZ,1,100),'...') as ruShortText from " +
-            " NEWS n join NEWS_USER nu on n.ID = nu.NEWS_ID where nu.USER_ID is null or nu.USER_ID = ? and n.STATUS ='APPROVED' order by n.CREATED_AT ", nativeQuery = true)
-    List<RusNews> getRuNews(Long userId, Pageable pageable);
+    @Query(value = "select n.updated_at as newsTime,n.title_ru as ruTitle,n.TEXT_RU as ruText,concat(SUBSTR(n.text_ru,1,100),'...') as newsShortText from " +
+            " news n join news_user nu on n.ID = nu.news_id where nu.user_id = -1 or nu.user_id = (:userId) and n.status ='NEW' order by n.created_at ", nativeQuery = true)
+    Page<NewsProjection> getRuNews(@Param("userId") Long userId,@Param("pageable") Pageable pageable);
 
-    @Query(value = "select n.UPDATED_AT as engTime,n.TITLE_ENG as engTitle,n.TEXT_ENG as engText,concat(SUBSTR(n.TEXT_UZ,1,100),'...') as engShortText from " +
-            " NEWS n join NEWS_USER nu on n.ID = nu.NEWS_ID where nu.USER_ID is null or nu.USER_ID = ? and n.STATUS ='APPROVED' order by n.CREATED_AT ", nativeQuery = true)
-    List<EngNews> getEngNews(Long userId, Pageable pageable);
+    @Query(value = "select n.updated_at as newsTime,n.title_eng as engTitle,n.text_eng as engText,concat(SUBSTR(n.text_eng,1,100),'...') as newsShortText from " +
+            " news n join news_user nu on n.ID = nu.news_id where nu.user_id = -1 or nu.user_id = (:userId) and n.status ='NEW' order by n.created_at ", nativeQuery = true)
+    Page<NewsProjection> getEngNews(@Param("userId") Long userId,@Param("pageable") Pageable pageable);
 
     @Query(value = "select * from News n join NEWS_USER NU on n.ID = NU.NEWS_ID where n.STATUS <> 'DELETED'  order by n.CREATED_AT ", nativeQuery = true)
-    List<News> getNewsForAdm(Pageable pageable);
+    Page<News> getNewsForAdm(Pageable pageable);
 
 }

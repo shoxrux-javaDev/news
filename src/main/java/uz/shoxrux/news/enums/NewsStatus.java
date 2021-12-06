@@ -1,7 +1,7 @@
 package uz.shoxrux.news.enums;
 
 
-public enum EnumStatus {
+public enum NewsStatus {
 
     NEW,
     APPROVED,

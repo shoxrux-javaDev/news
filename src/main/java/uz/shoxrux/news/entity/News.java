@@ -4,7 +4,7 @@ import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import uz.shoxrux.news.entity.template.AbsMain;
-import uz.shoxrux.news.enums.EnumStatus;
+import uz.shoxrux.news.enums.NewsStatus;
 
 import javax.persistence.*;
 import java.util.List;
@@ -55,5 +55,5 @@ public class News extends AbsMain {
     private String textEng;
 
     @Enumerated(value = EnumType.STRING)
-    private EnumStatus status;
+    private NewsStatus status;
 }
