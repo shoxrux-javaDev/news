@@ -1,26 +1,20 @@
 package uz.shoxrux.news.repo.projection;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
+
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public interface NewsProjection {
 
-    String getUzTitle();
+    String getTitle();
 
-    String getUzText();
-
-    String getEngTitle();
-
-    String getEngText();
-
-    String getRuTitle();
-
-    String getRuText();
+    String getText();
 
     String getNewsShortText();
 
-    ZonedDateTime getNewsTime();
+    Instant getTime();
 
 }

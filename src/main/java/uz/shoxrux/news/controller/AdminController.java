@@ -36,10 +36,10 @@ public class AdminController {
     }
 
     //    @PreAuthorize(value = "hasRole('ADMIN')")
-    @GetMapping("/{userId}")
-    public ResponseEntity<?> getToAdmin(@PathVariable Long userId, @RequestParam("page") Integer page,
+    @GetMapping("/adm")
+    public ResponseEntity<?> getToAdmin(@RequestParam("page") Integer page,
                                       @RequestParam("size") Integer size) {
-        ApiResponse response = newsService.getToAdmin(page, size);
+        ApiResponse response = newsService.getToAdmin(page,size);
         return ResponseEntity.status(response.isSuccess() ? 200 : 409).body(response);
     }
 

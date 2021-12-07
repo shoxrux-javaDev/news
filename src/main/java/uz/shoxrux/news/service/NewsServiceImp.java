@@ -19,8 +19,10 @@ import uz.shoxrux.news.repo.projection.NewsProjection;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -40,7 +42,7 @@ public class NewsServiceImp implements NewsService {
         if (file != null) {
             List<Long> userList = Arrays.stream(new String(file.getBytes(), StandardCharsets.UTF_8).split(","))
                     .map(String::trim)
-                    .filter(str -> str.length() >= 2)
+                    .filter(str -> str.length() >= 4)
                     .map(Long::valueOf)
                     .collect(Collectors.toList());
             newsModel.setUserId(userList);
@@ -99,9 +101,10 @@ public class NewsServiceImp implements NewsService {
     @Override
     public ApiResponse getToAdmin(Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<News> newsForAdm = newsRepo.getNewsForAdm(pageable);
+//        Page<News> newsForAdm =  newsRepo.getNewsForAdm("DELETED",pageable);
+        Page<News> newsForAdm =  newsRepo.findAllByStatusNot(NewsStatus.DELETED, pageable);
         if (newsForAdm.isEmpty()) return new ApiResponse(EnumMessage.NOT_NULL_LIST.toString());
-        return new ApiResponse(newsForAdm);
+        return new ApiResponse(newsForAdm.toList());
     }
 
     @Override
@@ -119,18 +122,23 @@ public class NewsServiceImp implements NewsService {
     }
 
     public void addNewsForAnyField(NewsDto newsDto, News news) {
-        int count = 0;
-        if (newsDto.getTitleRu().isEmpty() || newsDto.getTextRu().isEmpty()) count++;
-        news.setTitleRu(newsDto.getTitleRu());
-        news.setTextRu(newsDto.getTextRu());
-        if (newsDto.getTitleUz().isEmpty() || newsDto.getTextUz().isEmpty()) count++;
-        news.setTitleUz(newsDto.getTitleUz());
-        news.setTextUz(newsDto.getTextUz());
-        if (newsDto.getTitleEng().isEmpty() || newsDto.getTextEng().isEmpty()) count++;
+        if (newsDto==null) new ApiResponse("news body couldn't be null");
+
+
+        assert newsDto != null;
+        if (!newsDto.getTitleRu().isEmpty() || !newsDto.getTextRu().isEmpty()) {
+            news.setTitleRu(newsDto.getTitleRu());
+            news.setTextRu(newsDto.getTextRu());
+        }
+
+        if (!newsDto.getTitleUz().isEmpty() || !newsDto.getTextUz().isEmpty()) {
+            news.setTitleUz(newsDto.getTitleUz());
+            news.setTextUz(newsDto.getTextUz());
+        }
+
+        if (!newsDto.getTitleEng().isEmpty() || !newsDto.getTextEng().isEmpty())
         news.setTitleEng(newsDto.getTitleEng());
         news.setTextEng(newsDto.getTextEng());
-        if (count == 3)
-            new ApiResponse("news body couldn't be null");
     }
 
 

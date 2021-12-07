@@ -1,6 +1,7 @@
 package uz.shoxrux.news.entity.template;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -15,6 +16,8 @@ import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 @MappedSuperclass
@@ -27,11 +30,12 @@ public abstract class AbsMain {
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    protected ZonedDateTime createdAt;
+    protected Instant createdAt;
 
     @UpdateTimestamp
+//    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "dd-MM-yyyy HH:mm")
     @Column(nullable = false)
-    protected ZonedDateTime updatedAt;
+    protected Instant updatedAt;
 
     @CreatedBy
     @JoinColumn(updatable = false)

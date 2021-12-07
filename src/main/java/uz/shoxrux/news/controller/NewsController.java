@@ -1,16 +1,10 @@
 package uz.shoxrux.news.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import uz.shoxrux.news.dto.ApiResponse;
-import uz.shoxrux.news.dto.ApproveAndDeleteDto;
-import uz.shoxrux.news.dto.NewsDto;
 import uz.shoxrux.news.service.NewsService;
-
-import java.io.IOException;
 
 @RequiredArgsConstructor
 @RestController

@@ -1,7 +1,6 @@
 package uz.shoxrux.news.service;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.web.multipart.MultipartFile;
 import uz.shoxrux.news.dto.ApiResponse;
 import uz.shoxrux.news.dto.ApproveAndDeleteDto;
