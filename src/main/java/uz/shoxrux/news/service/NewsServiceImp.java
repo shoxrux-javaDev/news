@@ -38,7 +38,7 @@ public class NewsServiceImp implements NewsService {
 //        if (optionalNews.isEmpty() && file.isEmpty() )
 //            return new ApiResponse(EnumMessage.NOT_FOUND.toString());
         News newsModel = new News();
-        addNewsForAnyField(newsDto, newsModel);
+        newsMappingMethod(newsDto, newsModel);
         if (file != null) {
             List<Long> userList = Arrays.stream(new String(file.getBytes(), StandardCharsets.UTF_8).split(","))
                     .map(String::trim)
@@ -100,11 +100,12 @@ public class NewsServiceImp implements NewsService {
 
     @Override
     public ApiResponse getToAdmin(Integer page, Integer size) {
+        NewsStatus deleted = NewsStatus.DELETED;
         Pageable pageable = PageRequest.of(page, size);
 //        Page<News> newsForAdm =  newsRepo.getNewsForAdm("DELETED",pageable);
         Page<News> newsForAdm =  newsRepo.findAllByStatusNot(NewsStatus.DELETED, pageable);
         if (newsForAdm.isEmpty()) return new ApiResponse(EnumMessage.NOT_NULL_LIST.toString());
-        return new ApiResponse(newsForAdm.toList());
+        return new ApiResponse(newsForAdm);
     }
 
     @Override
@@ -114,14 +115,14 @@ public class NewsServiceImp implements NewsService {
         Optional<News> optionalNews = newsRepo.findById(newsDto.getUserId());
         if (optionalNews.isEmpty() || id == 0) return new ApiResponse("userNewsId not found");
         News newsModel = byId.get();
-        addNewsForAnyField(newsDto, newsModel);
+        newsMappingMethod(newsDto, newsModel);
         newsModel.setStatus(NewsStatus.NEW);
         newsRepo.save(newsModel);
         return new ApiResponse(EnumMessage.UPDATE.toString());
 
     }
 
-    public void addNewsForAnyField(NewsDto newsDto, News news) {
+    public void newsMappingMethod(NewsDto newsDto, News news) {
         if (newsDto==null) new ApiResponse("news body couldn't be null");
 
 

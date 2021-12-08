@@ -35,7 +35,7 @@ public interface NewsRepo extends JpaRepository<News, Long> {
             " news n join news_user nu on n.ID = nu.news_id where nu.user_id = -1 or nu.user_id = (:userId) and n.status ='NEW' order by n.created_at ", nativeQuery = true)
     Page<NewsProjection> getEngNews(@Param("userId") Long userId,@Param("pageable") Pageable pageable);
 
-    @Query(value = "select * from News n join NEWS_USER NU on n.ID = NU.NEWS_ID where n.STATUS <> 'DELETED'  order by n.CREATED_AT ", nativeQuery = true)
+    @Query(value = "select * from News n join NEWS_USER NU on n.ID = NU.NEWS_ID where n.STATUS <> (:deleted)  order by n.CREATED_AT ", nativeQuery = true)
     Page<News> getNewsForAdm(String deleted,Pageable pageable);
 
     Page<News> findAllByStatusNot(NewsStatus status, Pageable pageable);
